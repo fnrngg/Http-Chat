@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="white">#FFF</color>
+    <color name="blue">#5479F1</color>
+    <color name="grey_probably">#F0F4FF</color>
+    <color name="user_name_color">#252D46</color>
+    <color name="sender_background_color">#F4F6FF</color>
+    <color name="send_message_color">#F4F4F4</color>
+    <color name="user_image_border_color">#67AEF7</color>
+</resources>

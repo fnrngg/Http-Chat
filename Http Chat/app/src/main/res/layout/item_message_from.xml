@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.chauthai.swipereveallayout.SwipeRevealLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:dragEdge="left"
+    app:mode="same_level">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="100dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center|end"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_delete"
+            tools:ignore="ContentDescription" />
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="35dp"
+        android:background="@color/white"
+        android:paddingVertical="20dp">
+
+        <ImageView
+            android:id="@+id/message_from_image"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:src="@drawable/icons_user_male"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/message_from_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="Sayed Eftiaz"
+            android:textColor="@color/user_name_color"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@id/message_from_image"
+            app:layout_constraintTop_toTopOf="@id/message_from_image" />
+
+        <TextView
+            android:id="@+id/message_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="On my way home but i needed to stop by the book store to…"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@id/message_sent_time_text"
+            app:layout_constraintStart_toStartOf="@id/message_from_text"
+            app:layout_constraintTop_toBottomOf="@id/message_from_text" />
+
+        <TextView
+            android:id="@+id/message_sent_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5 min"
+            app:layout_constraintBottom_toBottomOf="@id/message_from_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/message_from_text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.chauthai.swipereveallayout.SwipeRevealLayout>

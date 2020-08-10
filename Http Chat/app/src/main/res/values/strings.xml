@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Http Chat</string>
+    <string name="checking_connection">Checking connection</string>
+    <string name="start">Start</string>
+    <string name="enter_your_nickname">Enter your nickname</string>
+    <string name="what_i_do">What I do</string>
+    <string name="message">Message</string>
+    <string name="search">Search</string>
+</resources>
