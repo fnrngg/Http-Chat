@@ -9,5 +9,6 @@ data class Message(
     val id: Long = 0,
     val text: String,
     val dateMillis: Long,
+    val from: Long,
     val userMappingId: Long
 )

@@ -9,6 +9,9 @@ import com.example.httpserver.database.entities.User
 @Dao
 interface UsersDao {
 
+    @Query("select u.* from users u where u.id <> :userId")
+    fun getAllAvailableUsers(userId: Long): ArrayList<User>
+
     @Query("select count(u.name) from users u where u.id = :userId limit 1")
     fun checkIfUserExists(userId: Long): Boolean
 
