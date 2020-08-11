@@ -1,8 +1,11 @@
 package com.example.httpchat.ui.messages
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.example.httpchat.databinding.ItemMessageFromBinding
 import com.example.httpchat.models.responses.UserAndMessageThumbnail
@@ -71,6 +74,18 @@ class MessagesRecyclerAdapter : RecyclerView.Adapter<MessagesRecyclerAdapter.Vie
         }
 
         fun bindData(position: Int) {
+            if (!conversations[position].user.picture.isNullOrEmpty()) {
+                val imageAsBytes: ByteArray = Base64.decode(conversations[position].user.picture, Base64.DEFAULT)
+                val image = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.count())
+                Glide.with(binding.root.context)
+                    .load(image)
+                    .into(binding.messageFromImage)
+            }
+
+            binding.messageFromText.text = conversations[position].user.name
+            binding.messageText.text = conversations[position].message?.text
+//            binding.messageSentTimeText.text = conversations[position].message.dateMillis
+
             binding.deleteImage.setOnClickListener {
                 conversations.removeAt(position)
                 notifyDataSetChanged()

@@ -33,20 +33,21 @@ class MessagesActivity : AppCompatActivity(), MessagesContract.View {
         setContentView(binding.root)
         presenter = MessagesPresenterImpl(this)
         setupRecycler()
-        presenter.getConversations("", loadedNum)
+        presenter.getConversations(loadedNum)
 
         setupSearch()
     }
 
     private fun setupSearch() {
         binding.messagesSearch.doAfterTextChanged {
-            presenter.getConversations(binding.messagesSearch.text.toString(), loadedNum)
+            presenter.getConversations(loadedNum)
         }
     }
 
     override fun onStart() {
         super.onStart()
         loadedNum = 0
+        setupRecycler()
     }
 
     private fun setupRecycler() {
@@ -57,12 +58,12 @@ class MessagesActivity : AppCompatActivity(), MessagesContract.View {
             ConversationActivity.start(this, user)
         }
 
-        adapter.itemDeleteListener = {userId ->
-            presenter.deleteConversation(userId)
+        adapter.itemDeleteListener = {userMappingId ->
+            presenter.deleteConversation(userMappingId)
         }
 
         adapter.lastItemLoadedListener = {
-            presenter.getConversations(loadedNum = loadedNum)
+            presenter.getConversations(loadedNum)
         }
     }
 

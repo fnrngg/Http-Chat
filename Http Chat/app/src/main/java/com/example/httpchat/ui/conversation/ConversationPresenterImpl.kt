@@ -28,7 +28,7 @@ class ConversationPresenterImpl(private val view: ConversationContract.View) :
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        view.setConversation(it)
+                        view.setConversation(it, myId)
                     },
                     {
                     })

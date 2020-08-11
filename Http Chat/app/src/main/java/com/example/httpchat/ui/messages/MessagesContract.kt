@@ -9,7 +9,9 @@ interface MessagesContract {
     }
 
     interface Presenter {
-        fun getConversations(nickname: String = "", loadedNum: Int)
+        fun getConversations(loadedNum: Int)
+
+        fun searchConversations(nickname: String)
 
         fun dispose()
 

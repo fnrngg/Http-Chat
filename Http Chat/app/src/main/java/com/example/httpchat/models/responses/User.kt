@@ -4,5 +4,5 @@ data class User(
     val id: Long,
     val name: String,
     val profession: String,
-    val picture: String
+    val picture: String?
 )

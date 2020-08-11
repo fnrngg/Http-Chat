@@ -64,7 +64,7 @@ class ConversationActivity : AppCompatActivity(), ConversationContract.View {
     private fun setupRecycler() {
         adapter = ConversationRecyclerAdapter()
         binding.messagesRecycler.adapter = adapter
-        binding.messagesRecycler.layoutManager = LinearLayoutManager(this)
+        binding.messagesRecycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
     }
 
 
@@ -84,8 +84,8 @@ class ConversationActivity : AppCompatActivity(), ConversationContract.View {
         }
     }
 
-    override fun setConversation(conversation: List<Message>) {
-        adapter.setData(conversation)
+    override fun setConversation(conversation: List<Message>, myId: String) {
+        adapter.setData(conversation.asReversed(), myId)
     }
 
     override fun onDestroy() {

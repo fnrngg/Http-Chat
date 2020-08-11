@@ -73,8 +73,6 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
             val selectedImage = BitmapFactory.decodeStream(imageStream)
             image = toBase64(selectedImage)
 
-//            val imageAsBytes: ByteArray = Base64.decode(imgString, Base64.DEFAULT)
-//            binding.userImage.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.count()))
         }
     }
 

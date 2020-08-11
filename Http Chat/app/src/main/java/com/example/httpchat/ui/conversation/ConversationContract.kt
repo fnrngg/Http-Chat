@@ -4,7 +4,7 @@ import com.example.httpchat.models.responses.Message
 
 interface ConversationContract {
     interface View {
-        fun setConversation(conversation: List<Message>)
+        fun setConversation(conversation: List<Message>, myId: String)
 
     }
 
