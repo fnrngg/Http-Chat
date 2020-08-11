@@ -5,9 +5,16 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.httpserver.database.entities.ActiveUser
+import com.example.httpserver.database.entities.User
 
 @Dao
 interface ActiveUsersDao {
+
+    @Query("select u.* from users u join active_users a on a.userId = u.id where u.id <> :userId")
+    fun getActiveUsersFor(userId: Long): List<User>
+
+    @Query("select count(a.userId) from active_users a where a.userId = :userId limit 1")
+    fun checkIfUserIsLoggedIn(userId: Long): Boolean
 
     @Query("select * from active_users")
     fun getAllActiveUsers(): List<ActiveUser>
