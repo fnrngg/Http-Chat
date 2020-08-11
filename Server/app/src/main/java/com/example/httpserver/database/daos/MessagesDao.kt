@@ -9,6 +9,9 @@ import com.example.httpserver.database.entities.Message
 @Dao
 interface MessagesDao {
 
+    @Query("select * from messages m where m.userMappingId = :userMappingId order by m.dateMillis desc limit 1")
+    fun getConversationThumbnailBetween(userMappingId: Long): Message
+
     @Query("select * from messages m where m.userMappingId = :userMappingId order by m.dateMillis asc")
     fun getConversationBetween(userMappingId: Long): ArrayList<Message>
 

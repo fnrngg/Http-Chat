@@ -2,7 +2,7 @@ package com.example.httpserver
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.httpserver.beans.UserAndMessages
+import com.example.httpserver.beans.UserAndMessageThumbnail
 import com.example.httpserver.database.MainDatabase
 import com.example.httpserver.database.daos.ActiveUsersDao
 import com.example.httpserver.database.daos.MessagesDao
@@ -258,7 +258,7 @@ class MainActivity : AppCompatActivity() {
                     if (userExists) {
                         val userIsLoggedIn = activeUsersDao.checkIfUserIsLoggedIn(userId)
                         if (userIsLoggedIn) {
-                            val resultArray = arrayListOf<UserAndMessages>()
+                            val resultArray = arrayListOf<UserAndMessageThumbnail>()
                             val userMappings = userMappingsDao.getMappingsForUser(userId)
                             for (userMapping in userMappings) {
                                 var otherUserId: Long = 0
@@ -268,8 +268,8 @@ class MainActivity : AppCompatActivity() {
                                     otherUserId = userMapping.userTwo
                                 }
                                 val user = usersDao.getUserById(otherUserId)
-                                val messages = messagesDao.getConversationBetween(userMapping.id)
-                                resultArray.add(UserAndMessages(user, messages))
+                                val messages = messagesDao.getConversationThumbnailBetween(userMapping.id)
+                                resultArray.add(UserAndMessageThumbnail(user, messages))
                             }
                             val responseBody = Gson().toJson(resultArray)
                             sendResponse(httpExchange, responseBody)
