@@ -8,13 +8,14 @@ import com.example.httpserver.database.daos.ConversationVisibilityDao
 import com.example.httpserver.database.daos.MessagesDao
 import com.example.httpserver.database.daos.UserMappingsDao
 import com.example.httpserver.database.daos.UsersDao
+import com.example.httpserver.database.entities.ConversationVisibility
 import com.example.httpserver.database.entities.Message
 import com.example.httpserver.database.entities.User
 import com.example.httpserver.database.entities.UserMapping
 
 @Database(
-    entities = [User::class, Message::class, UserMapping::class],
-    version = 1
+    entities = [ConversationVisibility::class, User::class, Message::class, UserMapping::class],
+    version = 2
 )
 abstract class MainDatabase : RoomDatabase() {
     companion object {

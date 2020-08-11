@@ -267,7 +267,7 @@ class MainActivity : AppCompatActivity() {
                     val userOneExists = usersDao.checkIfUserExists(userIdOne)
                     if (userOneExists) {
                         val availableUsers =
-                            usersDao.getAllAvailableAlikeUsers(userIdOne, userNameTwo)
+                            usersDao.getAllAvailableAlikeUsers(userIdOne, "%$userNameTwo%")
                         val resultArray = arrayListOf<UserAndMessageThumbnail>()
                         for (availableUser in availableUsers) {
                             val userMappingExists =
@@ -330,20 +330,29 @@ class MainActivity : AppCompatActivity() {
                         if (loadPosition >= userMappings.size) {
                             notifyError(httpExchange, "Index Out Of Actual Conversations Size")
                         } else {
-                            val stopPosition = loadPosition + 10
+                            var stopPosition = loadPosition + 10
                             for (position in loadPosition until userMappings.size) {
                                 if (position == stopPosition) break
                                 val userMapping = userMappings[position.toInt()]
-                                var otherUserId: Long = 0
-                                if (userMapping.userOne != userId) {
-                                    otherUserId = userMapping.userOne
-                                } else if (userMapping.userTwo != userId) {
-                                    otherUserId = userMapping.userTwo
+                                val conversationVisibilityExists =
+                                    conversationVisibilityDao.conversationIsVisibleFor(
+                                        userId,
+                                        userMapping.id
+                                    )
+                                if (conversationVisibilityExists) {
+                                    var otherUserId: Long = 0
+                                    if (userMapping.userOne != userId) {
+                                        otherUserId = userMapping.userOne
+                                    } else if (userMapping.userTwo != userId) {
+                                        otherUserId = userMapping.userTwo
+                                    }
+                                    val user = usersDao.getUserById(otherUserId)
+                                    val messages =
+                                        messagesDao.getConversationThumbnail(userMapping.id)
+                                    resultArray.add(UserAndMessageThumbnail(user, messages))
+                                } else {
+                                    stopPosition+=1
                                 }
-                                val user = usersDao.getUserById(otherUserId)
-                                val messages =
-                                    messagesDao.getConversationThumbnail(userMapping.id)
-                                resultArray.add(UserAndMessageThumbnail(user, messages))
                             }
                         }
                         val responseBody = Gson().toJson(resultArray)
@@ -374,9 +383,18 @@ class MainActivity : AppCompatActivity() {
                             userMappingsDao.checkIfMappingExists(userIdOne, userIdTwo)
                         if (mappingExists) {
                             val mapping = userMappingsDao.getMapping(userIdOne, userIdTwo)
-                            val conversation = messagesDao.getConversationBetween(mapping.id)
-                            val responseBody = Gson().toJson(conversation)
-                            sendResponse(httpExchange, responseBody)
+                            val conversationIsVisible =
+                                conversationVisibilityDao.conversationIsVisibleFor(
+                                    userIdOne,
+                                    mapping.id
+                                )
+                            if (conversationIsVisible) {
+                                val conversation = messagesDao.getConversationBetween(mapping.id)
+                                val responseBody = Gson().toJson(conversation)
+                                sendResponse(httpExchange, responseBody)
+                            } else {
+                                notifyError(httpExchange, "Conversation Does Not Exist")
+                            }
                         } else {
                             notifyError(httpExchange, "Conversation Does Not Exist")
                         }
@@ -400,10 +418,11 @@ class MainActivity : AppCompatActivity() {
                     val userMappingId = jsonBody.getLong("userMappingId")
 
                     val userExists = usersDao.checkIfUserExists(userId)
-                    val mappingSize = userMappingsDao.checkIfMappingExists(userMappingId)
+                    val visibilityQuantity =
+                        conversationVisibilityDao.conversationVisibilitiesQuantityFor(userMappingId)
                     if (userExists) {
-                        if (mappingSize > 0) {
-                            if (mappingSize > 1) {
+                        if (visibilityQuantity > 0) {
+                            if (visibilityQuantity > 1) {
                                 conversationVisibilityDao.deleteConversationFor(
                                     userId,
                                     userMappingId
