@@ -18,7 +18,7 @@ class MessagesPresenterImpl(private val view: MessagesContract.View) :
 
     override fun getConversations(nickname: String, loadedNum: Int) {
         compositeDisposable.add(
-            service.getAllConversations(myId, nickname, loadedNum).subscribeOn(Schedulers.io())
+            service.loadConversationHistory(myId.toLong(), loadedNum.toLong()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
@@ -33,9 +33,9 @@ class MessagesPresenterImpl(private val view: MessagesContract.View) :
         compositeDisposable.dispose()
     }
 
-    override fun deleteConversation(userId: String) {
+    override fun deleteConversation(userMappingId: Long) {
         compositeDisposable.add(
-            service.deleteConversation(myId, userId).subscribeOn(Schedulers.io())
+            service.deleteConversation(myId.toLong(), userMappingId).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({}, {})
         )
