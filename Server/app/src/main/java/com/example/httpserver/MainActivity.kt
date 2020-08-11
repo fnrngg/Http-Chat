@@ -213,7 +213,12 @@ class MainActivity : AppCompatActivity() {
                                 )
                             if (!conversationIsVisible) {
                                 conversationVisibilityDao.insertConversationVisibility(
-                                    ConversationVisibility(0, mapping.id, userIdFrom)
+                                    ConversationVisibility(
+                                        0,
+                                        mapping.id,
+                                        userIdFrom,
+                                        System.currentTimeMillis()
+                                    )
                                 )
                             }
                             messagesDao.insertMessage(
@@ -229,11 +234,22 @@ class MainActivity : AppCompatActivity() {
                             val newUserMapping = UserMapping(0, userIdFrom, userIdTo)
                             userMappingsDao.insertUserMapping(newUserMapping)
                             val userMapping = userMappingsDao.getMapping(userIdFrom, userIdTo)
+                            val timeMillis = System.currentTimeMillis()
                             conversationVisibilityDao.insertConversationVisibility(
-                                ConversationVisibility(0, userMapping.id, userMapping.userOne)
+                                ConversationVisibility(
+                                    0,
+                                    userMapping.id,
+                                    userMapping.userOne,
+                                    timeMillis
+                                )
                             )
                             conversationVisibilityDao.insertConversationVisibility(
-                                ConversationVisibility(0, userMapping.id, userMapping.userTwo)
+                                ConversationVisibility(
+                                    0,
+                                    userMapping.id,
+                                    userMapping.userTwo,
+                                    timeMillis
+                                )
                             )
                             messagesDao.insertMessage(
                                 Message(
@@ -283,9 +299,20 @@ class MainActivity : AppCompatActivity() {
                                 if (conversationIsVisible) {
                                     val thumbnailMessage =
                                         messagesDao.getConversationThumbnail(mapping.id)
-                                    val userAndMessageThumbnail =
-                                        UserAndMessageThumbnail(availableUser, thumbnailMessage)
-                                    resultArray.add(userAndMessageThumbnail)
+                                    val conversationVisibility =
+                                        conversationVisibilityDao.getConversationVisibility(
+                                            userIdOne,
+                                            mapping.id
+                                        )
+                                    if (thumbnailMessage.dateMillis >= conversationVisibility.dateMillis) {
+                                        val userAndMessageThumbnail =
+                                            UserAndMessageThumbnail(availableUser, thumbnailMessage)
+                                        resultArray.add(userAndMessageThumbnail)
+                                    } else {
+                                        val userAndMessageThumbnail =
+                                            UserAndMessageThumbnail(availableUser, null)
+                                        resultArray.add(userAndMessageThumbnail)
+                                    }
                                 } else {
                                     val userAndMessageThumbnail =
                                         UserAndMessageThumbnail(availableUser, null)
@@ -347,11 +374,20 @@ class MainActivity : AppCompatActivity() {
                                         otherUserId = userMapping.userTwo
                                     }
                                     val user = usersDao.getUserById(otherUserId)
-                                    val messages =
+                                    val message =
                                         messagesDao.getConversationThumbnail(userMapping.id)
-                                    resultArray.add(UserAndMessageThumbnail(user, messages))
+                                    val conversationVisibility =
+                                        conversationVisibilityDao.getConversationVisibility(
+                                            userId,
+                                            userMapping.id
+                                        )
+                                    if (message.dateMillis >= conversationVisibility.dateMillis) {
+                                        resultArray.add(UserAndMessageThumbnail(user, message))
+                                    } else {
+                                        resultArray.add(UserAndMessageThumbnail(user, null))
+                                    }
                                 } else {
-                                    stopPosition+=1
+                                    stopPosition += 1
                                 }
                             }
                         }
@@ -389,9 +425,25 @@ class MainActivity : AppCompatActivity() {
                                     mapping.id
                                 )
                             if (conversationIsVisible) {
-                                val conversation = messagesDao.getConversationBetween(mapping.id)
-                                val responseBody = Gson().toJson(conversation)
-                                sendResponse(httpExchange, responseBody)
+                                val conversationVisibility =
+                                    conversationVisibilityDao.getConversationVisibility(
+                                        userIdOne,
+                                        mapping.id
+                                    )
+                                val conversation: List<Message> =
+                                    messagesDao.getConversationBetween(mapping.id)
+                                val filteredConversation = arrayListOf<Message>()
+                                for (message in conversation) {
+                                    if (message.dateMillis >= conversationVisibility.dateMillis) {
+                                        filteredConversation.add(message)
+                                    }
+                                }
+                                if (filteredConversation.size == 0) {
+                                    notifyError(httpExchange, "Conversation Does Not Exist")
+                                } else {
+                                    val responseBody = Gson().toJson(filteredConversation)
+                                    sendResponse(httpExchange, responseBody)
+                                }
                             } else {
                                 notifyError(httpExchange, "Conversation Does Not Exist")
                             }

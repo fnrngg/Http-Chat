@@ -8,5 +8,6 @@ data class ConversationVisibility(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val userMappingId: Long,
-    val userId: Long
+    val userId: Long,
+    val dateMillis: Long
 )

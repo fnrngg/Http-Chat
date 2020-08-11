@@ -15,6 +15,9 @@ interface ConversationVisibilityDao {
     @Query("select count(c.userId) from conversation_visibilities c where c.userId = :userId and c.userMappingId = :userMappingId limit 1")
     fun conversationIsVisibleFor(userId: Long, userMappingId: Long): Boolean
 
+    @Query("select c.* from conversation_visibilities c where c.userId = :userId and c.userMappingId = :userMappingId limit 1")
+    fun getConversationVisibility(userId: Long, userMappingId: Long): ConversationVisibility
+
     @Query("delete from conversation_visibilities where userId = :userId and userMappingId = :userMappingId ")
     fun deleteConversationFor(userId: Long, userMappingId: Long)
 
