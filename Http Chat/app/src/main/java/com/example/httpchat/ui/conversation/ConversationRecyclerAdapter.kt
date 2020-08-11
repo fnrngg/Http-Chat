@@ -7,6 +7,8 @@ import com.example.httpchat.databinding.ItemSenderMessageBinding
 
 class ConversationRecyclerAdapter: RecyclerView.Adapter<ConversationRecyclerAdapter.ViewHolder>() {
 
+    private var conversation: List<String> = listOf()
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -21,6 +23,12 @@ class ConversationRecyclerAdapter: RecyclerView.Adapter<ConversationRecyclerAdap
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindData(position)
+    }
+
+    fun setData(conversation: List<String>?) {
+        conversation?.let {
+            this.conversation = it
+        }
     }
 
     inner class ViewHolder(binding: ItemSenderMessageBinding) : RecyclerView.ViewHolder(binding.root) {

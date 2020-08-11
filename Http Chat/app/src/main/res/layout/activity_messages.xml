@@ -51,6 +51,7 @@
                 app:layout_collapseMode="pin">
 
                 <EditText
+                    android:id="@+id/messages_search"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:layout_marginVertical="22dp"

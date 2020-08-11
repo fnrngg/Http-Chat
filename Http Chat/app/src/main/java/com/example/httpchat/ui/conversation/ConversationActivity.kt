@@ -9,12 +9,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.httpchat.R
 import com.example.httpchat.databinding.ActivityConversationBinding
 
 
-class ConversationActivity : AppCompatActivity() {
+class ConversationActivity : AppCompatActivity(), ConversationContract.View {
 
     companion object {
         private const val MESSAGE_FROM_USER ="MESSAGE_FROM_USER"
@@ -27,33 +26,46 @@ class ConversationActivity : AppCompatActivity() {
     }
     
     private lateinit var binding: ActivityConversationBinding
+
+    private lateinit var adapter: ConversationRecyclerAdapter
+
+    private lateinit var presenter: ConversationPresenterImpl
+    private lateinit var userId: String
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityConversationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
+        userId = intent.getStringExtra(MESSAGE_FROM_USER)!!
         binding.sendMessageTextField.onRightDrawableClicked {
             Toast.makeText(this, "isao esao da arao", Toast.LENGTH_SHORT).show()
         }
 
-        binding.messagesRecycler.adapter =
-            ConversationRecyclerAdapter()
-        binding.messagesRecycler.layoutManager = LinearLayoutManager(this)
+        presenter = ConversationPresenterImpl(this)
+        setupViews()
+        presenter.getConversation(userId)
 
+    }
+
+    private fun setupViews() {
+        setupRecycler()
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.arrow_left)
 
-        val url: String? = ""
-        Glide.with(this)
-            .load(url)
-            .placeholder(R.drawable.icons_user_male)
-            .circleCrop()
-            .into(binding.userImage)
-
+        binding.sendMessageTextField.onRightDrawableClicked {
+            presenter.sendMessage(it.text.toString())
+        }
     }
+
+    private fun setupRecycler() {
+        adapter = ConversationRecyclerAdapter()
+        binding.messagesRecycler.adapter = adapter
+        binding.messagesRecycler.layoutManager = LinearLayoutManager(this)
+    }
+
 
     @SuppressLint("ClickableViewAccessibility")
     private fun EditText.onRightDrawableClicked(onClicked: (view: EditText) -> Unit) {
@@ -70,4 +82,14 @@ class ConversationActivity : AppCompatActivity() {
             hasConsumed
         }
     }
+
+    override fun setConversation(conversation: List<String>?) {
+        adapter.setData(conversation)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.dispose()
+    }
+
 }
