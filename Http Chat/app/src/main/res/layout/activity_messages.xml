@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ui.messages.MessagesActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -16,7 +18,8 @@
             android:layout_marginStart="-54dp"
             android:layout_marginTop="-10dp"
             android:layout_marginEnd="-32.5dp"
-            app:layout_scrollFlags="scroll|snapMargins|exitUntilCollapsed">
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -32,6 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="89dp"
                 android:layout_marginTop="60dp"
+                android:fitsSystemWindows="true"
                 android:text="@string/message"
                 android:textColor="@color/white"
                 android:textSize="43sp"
@@ -42,6 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="98dp"
                 android:layout_gravity="bottom"
+                android:fitsSystemWindows="true"
                 app:contentInsetStart="0dp"
                 app:layout_collapseMode="pin">
 
@@ -65,7 +70,9 @@
         android:id="@+id/messages_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="98dp"
+        android:fitsSystemWindows="true"
+        android:paddingTop="10dp"
+        android:clipToPadding="false"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:itemCount="8"
         tools:listitem="@layout/item_message_from" />

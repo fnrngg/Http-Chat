@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.httpchat.databinding.ActivityMessagesBinding
+import com.example.httpchat.ui.conversation.ConversationActivity
 
 class MessagesActivity : AppCompatActivity() {
     companion object {
@@ -16,13 +17,18 @@ class MessagesActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityMessagesBinding
+    private lateinit var adapter: MessagesRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMessagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.messagesRecycler.layoutManager = LinearLayoutManager(this)
-        binding.messagesRecycler.adapter =
-            MessagesRecyclerAdapter()
+        adapter = MessagesRecyclerAdapter()
+        binding.messagesRecycler.adapter = adapter
+        adapter.itemClickedListener = {user ->
+            ConversationActivity.start(this, user)
+        }
+
     }
 }

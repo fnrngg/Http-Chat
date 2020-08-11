@@ -8,9 +8,10 @@
 
     <ImageView
         android:id="@+id/user_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="278dp"
+        android:layout_height="289dp"
         android:layout_marginBottom="24dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/icons_user_male"
         app:layout_constraintBottom_toTopOf="@id/nick_name_text_field"
         app:layout_constraintEnd_toEndOf="parent"

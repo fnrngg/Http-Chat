@@ -13,16 +13,18 @@
         android:layout_height="100dp">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:id="@+id/delete_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center|end"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="10dp"
+            android:scaleType="center"
+            android:layout_marginStart="35dp"
             android:src="@drawable/ic_delete"
             tools:ignore="ContentDescription" />
     </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/conversation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="35dp"
