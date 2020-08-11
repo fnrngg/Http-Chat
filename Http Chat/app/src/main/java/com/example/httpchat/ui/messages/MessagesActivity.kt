@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.httpchat.databinding.ActivityMessagesBinding
+import com.example.httpchat.models.responses.UserAndMessageThumbnail
 import com.example.httpchat.ui.conversation.ConversationActivity
 
 class MessagesActivity : AppCompatActivity(), MessagesContract.View {
@@ -22,7 +23,7 @@ class MessagesActivity : AppCompatActivity(), MessagesContract.View {
 
     private lateinit var presenter: MessagesContract.Presenter
 
-    private val conversations = mutableListOf<String>()
+    private val conversations = mutableListOf<UserAndMessageThumbnail>()
 
     private var loadedNum: Int = 0
 
@@ -65,7 +66,7 @@ class MessagesActivity : AppCompatActivity(), MessagesContract.View {
         }
     }
 
-    override fun setConversations(conversations: List<String>) {
+    override fun setConversations(conversations: List<UserAndMessageThumbnail>) {
         this.conversations += conversations
         if (conversations.isNotEmpty()) {
             loadedNum++

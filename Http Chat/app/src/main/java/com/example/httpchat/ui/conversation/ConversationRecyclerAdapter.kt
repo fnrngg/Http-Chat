@@ -4,10 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.httpchat.databinding.ItemSenderMessageBinding
+import com.example.httpchat.models.responses.Message
 
 class ConversationRecyclerAdapter: RecyclerView.Adapter<ConversationRecyclerAdapter.ViewHolder>() {
 
-    private var conversation: List<String> = listOf()
+    private var conversation: List<Message> = listOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -25,8 +26,8 @@ class ConversationRecyclerAdapter: RecyclerView.Adapter<ConversationRecyclerAdap
         holder.bindData(position)
     }
 
-    fun setData(conversation: List<String>?) {
-        conversation?.let {
+    fun setData(conversation: List<Message>) {
+        conversation.let {
             this.conversation = it
         }
     }

@@ -1,6 +1,8 @@
 package com.example.httpchat.ui.register
 
+import android.util.Log
 import com.example.httpchat.models.User
+import com.example.httpchat.models.requests.UserLoginRequest
 import com.example.httpchat.preferences.PreferencesManager
 import com.example.httpchat.retrofit.Api
 import com.example.httpchat.retrofit.RetrofitClient
@@ -14,7 +16,7 @@ class RegisterPresenterImpl(private val view: RegisterContract.View) : RegisterC
     override fun saveUser(user: User) {
         val service = RetrofitClient.retrofit.create(Api::class.java)
         compositeDisposable.add(
-            service.saveUser(user)
+            service.userLogin(UserLoginRequest(user.nickname,user.profession,user.image))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -23,6 +25,7 @@ class RegisterPresenterImpl(private val view: RegisterContract.View) : RegisterC
                         view.startActivity()
                     },
                     {
+                        Log.d("ragaca","ragaca")
                     })
         )
     }

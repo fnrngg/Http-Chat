@@ -1,9 +1,11 @@
 package com.example.httpchat.ui.messages
 
+import com.example.httpchat.models.responses.UserAndMessageThumbnail
+
 interface MessagesContract {
 
     interface View {
-        fun setConversations(conversations: List<String>)
+        fun setConversations(conversations: List<UserAndMessageThumbnail>)
     }
 
     interface Presenter {
@@ -11,6 +13,6 @@ interface MessagesContract {
 
         fun dispose()
 
-        fun deleteConversation(userId: String)
+        fun deleteConversation(userMappingId: Long)
     }
 }

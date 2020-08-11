@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.httpchat.R
 import com.example.httpchat.databinding.ActivityConversationBinding
+import com.example.httpchat.models.responses.Message
 
 
 class ConversationActivity : AppCompatActivity(), ConversationContract.View {
@@ -83,7 +84,7 @@ class ConversationActivity : AppCompatActivity(), ConversationContract.View {
         }
     }
 
-    override fun setConversation(conversation: List<String>?) {
+    override fun setConversation(conversation: List<Message>) {
         adapter.setData(conversation)
     }
 

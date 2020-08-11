@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.httpchat.databinding.ActivityRegisterBinding
@@ -35,6 +36,7 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        presenter = RegisterPresenterImpl(this)
         binding.startButton.setOnClickListener {
             if (binding.doingTextField.text.isNullOrEmpty() or binding.nickNameTextField.text.isNullOrEmpty()) {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
@@ -89,6 +91,7 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
     }
 
     override fun startActivity() {
+        Log.d("ragaca","ragaca")
         MessagesActivity.start(this)
     }
 

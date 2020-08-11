@@ -1,6 +1,8 @@
 package com.example.httpchat.retrofit
 
 import com.example.httpchat.models.User
+import com.example.httpchat.models.requests.LoadConversationRequest
+import com.example.httpchat.models.requests.UserLoginRequest
 import com.example.httpchat.models.responses.Message
 import com.example.httpchat.models.responses.UserAndMessageThumbnail
 import io.reactivex.Single
@@ -9,19 +11,15 @@ import retrofit2.http.*
 interface Api {
     //TODO vaxo's work
     //loads single conversation between users
-    @Multipart
     @POST("messages/loadConversation")
     fun loadConversation(
-        @Part userIdOne: Long,
-        @Part userIdTwo: Long
+        @Body loadConversationRequest : LoadConversationRequest
     ): Single<List<Message>>
 
-    @Multipart
+
     @POST("login")
     fun userLogin(
-        @Part name: String,
-        @Part profession: String,
-        @Part picture: String
+        @Body userLoginRequest : UserLoginRequest
     ): Single<String>
 
     @Multipart
