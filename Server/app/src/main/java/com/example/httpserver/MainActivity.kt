@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity() {
                         val responseBody = Gson().toJson(availableUsers)
                         sendResponse(exchange, responseBody)
                     } else {
-                        notifyError(exchange, "User Is Registered")
+                        notifyError(exchange, "User Is Not Registered")
                     }
                 }
             }
