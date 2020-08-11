@@ -21,7 +21,7 @@ class RegisterPresenterImpl(private val view: RegisterContract.View) : RegisterC
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        PreferencesManager.saveUser(it)
+                        PreferencesManager.saveUser(it.id.toString())
                         view.startActivity()
                     },
                     {

@@ -91,7 +91,7 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
     }
 
     override fun startActivity() {
-        Log.d("ragaca","ragaca")
+//        Log.d("ragaca","ragaca")
         MessagesActivity.start(this)
     }
 
