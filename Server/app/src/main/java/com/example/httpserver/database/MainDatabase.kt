@@ -15,7 +15,7 @@ import com.example.httpserver.database.entities.UserMapping
 
 @Database(
     entities = [ConversationVisibility::class, User::class, Message::class, UserMapping::class],
-    version = 2
+    version = 3
 )
 abstract class MainDatabase : RoomDatabase() {
     companion object {
