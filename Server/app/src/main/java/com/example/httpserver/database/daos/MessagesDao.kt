@@ -10,10 +10,10 @@ import com.example.httpserver.database.entities.Message
 interface MessagesDao {
 
     @Query("select * from messages m where m.userMappingId = :userMappingId order by m.dateMillis asc")
-    fun getConversationBetween(userMappingId: Long): List<Message>
+    fun getConversationBetween(userMappingId: Long): ArrayList<Message>
 
     @Query("select * from messages")
-    fun getAllMessages(): List<Message>
+    fun getAllMessages(): ArrayList<Message>
 
     @Insert
     fun insertMessage(message: Message)

@@ -11,13 +11,13 @@ import com.example.httpserver.database.entities.User
 interface ActiveUsersDao {
 
     @Query("select u.* from users u join active_users a on a.userId = u.id where u.id <> :userId")
-    fun getActiveUsersFor(userId: Long): List<User>
+    fun getActiveUsersFor(userId: Long): ArrayList<User>
 
     @Query("select count(a.userId) from active_users a where a.userId = :userId limit 1")
     fun checkIfUserIsLoggedIn(userId: Long): Boolean
 
     @Query("select * from active_users")
-    fun getAllActiveUsers(): List<ActiveUser>
+    fun getAllActiveUsers(): ArrayList<ActiveUser>
 
     @Insert
     fun insertActiveUser(activeUser: ActiveUser)

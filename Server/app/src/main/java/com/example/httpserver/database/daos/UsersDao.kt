@@ -22,7 +22,7 @@ interface UsersDao {
     fun getUserByName(name: String): User
 
     @Query("select * from users")
-    fun getAllUsers(): List<User>
+    fun getAllUsers(): ArrayList<User>
 
     @Insert
     fun insertUser(user: User)

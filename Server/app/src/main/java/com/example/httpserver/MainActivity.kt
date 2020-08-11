@@ -2,6 +2,7 @@ package com.example.httpserver
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.httpserver.beans.UserAndMessages
 import com.example.httpserver.database.MainDatabase
 import com.example.httpserver.database.daos.ActiveUsersDao
 import com.example.httpserver.database.daos.MessagesDao
@@ -243,8 +244,9 @@ class MainActivity : AppCompatActivity() {
         run {
             when (httpExchange!!.requestMethod) {
                 "GET" -> {
-                    // Get all messages
-                    sendResponse(httpExchange, "Would be all messages stringified json")
+                    val messages = messagesDao.getAllMessages()
+                    val responseBody = Gson().toJson(messages)
+                    sendResponse(httpExchange, responseBody)
                 }
                 "POST" -> {
                     val inputStream = httpExchange.requestBody
@@ -256,7 +258,23 @@ class MainActivity : AppCompatActivity() {
                     if (userExists) {
                         val userIsLoggedIn = activeUsersDao.checkIfUserIsLoggedIn(userId)
                         if (userIsLoggedIn) {
-
+                            val resultArray = arrayListOf<UserAndMessages>()
+                            val userMappings = userMappingsDao.getMappingsForUser(userId)
+                            for (userMapping in userMappings) {
+                                var otherUserId: Long = 0
+                                if (userMapping.userOne != userId) {
+                                    otherUserId = userMapping.userOne
+                                } else if (userMapping.userTwo != userId) {
+                                    otherUserId = userMapping.userTwo
+                                }
+                                val user = usersDao.getUserById(otherUserId)
+                                val messages = messagesDao.getConversationBetween(userMapping.id)
+                                resultArray.add(UserAndMessages(user, messages))
+                            }
+                            val responseBody = Gson().toJson(resultArray)
+                            sendResponse(httpExchange, responseBody)
+                        } else {
+                            notifyError(httpExchange, "User Is Not Logged In")
                         }
                     } else {
                         notifyError(httpExchange, "User Is Not Registered")
