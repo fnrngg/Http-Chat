@@ -10,7 +10,7 @@ import com.example.httpserver.database.entities.UserMapping
 interface UserMappingsDao {
 
     @Query("select u.* from user_mappings u where u.userOne = :userId or u.userTwo = :userId")
-    fun getMappingsForUser(userId: Long): ArrayList<UserMapping>
+    fun getMappingsForUser(userId: Long): List<UserMapping>
 
     @Query("select u.* from user_mappings u where (u.userOne =:userOne and u.userTwo = :userTwo) or (u.userOne =:userTwo and u.userTwo = :userOne) limit 1")
     fun getMapping(userOne: Long, userTwo: Long): UserMapping

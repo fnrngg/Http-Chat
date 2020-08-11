@@ -13,10 +13,10 @@ interface MessagesDao {
     fun getConversationThumbnails(userMappingId: Long): Message
 
     @Query("select * from messages m where m.userMappingId = :userMappingId order by m.dateMillis asc")
-    fun getConversationBetween(userMappingId: Long): ArrayList<Message>
+    fun getConversationBetween(userMappingId: Long): List<Message>
 
     @Query("select * from messages")
-    fun getAllMessages(): ArrayList<Message>
+    fun getAllMessages(): List<Message>
 
     @Insert
     fun insertMessage(message: Message)
