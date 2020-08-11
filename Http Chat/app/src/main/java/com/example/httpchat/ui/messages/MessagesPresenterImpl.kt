@@ -16,24 +16,9 @@ class MessagesPresenterImpl(private val view: MessagesContract.View) :
 
     private val service = RetrofitClient.retrofit.create(Api::class.java)
 
-    override fun getConversations(loadedNum: Int) {
+    override fun getConversations(nickname: String, loadedNum: Int) {
         compositeDisposable.add(
-            service.loadConversationHistory(myId.toLong(), loadedNum.toLong())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        view.setConversations(it)
-                    },
-                    {
-                    })
-        )
-    }
-
-    override fun searchConversations(nickname: String) {
-        compositeDisposable.add(
-            service.searchConversation(myId.toLong(), nickname)
-                .subscribeOn(Schedulers.io())
+            service.loadConversationHistory(myId.toLong()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
