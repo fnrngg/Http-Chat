@@ -16,10 +16,8 @@ interface Api {
         @Body loadConversationRequest : LoadConversationRequest
     ): Single<List<Message>>
 
-    @Headers(value = [
-        "Accept:application/json",
-        "Content-type:application/json",
-        "Cache-Control: no-cache"]
+    @Headers(
+        "Content-type: application/json"
     )
     @POST("login")
     fun userLogin(

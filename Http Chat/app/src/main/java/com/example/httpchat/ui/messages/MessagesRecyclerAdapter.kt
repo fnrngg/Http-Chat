@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.example.httpchat.databinding.ItemMessageFromBinding
+import com.example.httpchat.models.responses.User
 import com.example.httpchat.models.responses.UserAndMessageThumbnail
 
 class MessagesRecyclerAdapter : RecyclerView.Adapter<MessagesRecyclerAdapter.ViewHolder>() {
@@ -16,7 +17,7 @@ class MessagesRecyclerAdapter : RecyclerView.Adapter<MessagesRecyclerAdapter.Vie
     private var conversations: MutableList<UserAndMessageThumbnail> =
         mutableListOf()
 
-    var itemClickedListener: ((user: String) -> Unit)? = null
+    var itemClickedListener: ((user: User) -> Unit)? = null
 
     var itemDeleteListener: ((userMappingId: Long) -> Unit)? = null
 
@@ -57,11 +58,7 @@ class MessagesRecyclerAdapter : RecyclerView.Adapter<MessagesRecyclerAdapter.Vie
 
         init {
             binding.conversation.setOnClickListener {
-                conversations[adapterPosition].message?.text?.let { it1 ->
-                    itemClickedListener?.invoke(
-                        it1
-                    )
-                }
+                itemClickedListener?.invoke(conversations[adapterPosition].user)
             }
 
             binding.deleteImage.setOnClickListener {

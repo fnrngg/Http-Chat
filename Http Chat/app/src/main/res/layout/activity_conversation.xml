@@ -14,6 +14,7 @@
         android:theme="@style/Actionbar">
 
         <com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:layout_marginTop="20dp"

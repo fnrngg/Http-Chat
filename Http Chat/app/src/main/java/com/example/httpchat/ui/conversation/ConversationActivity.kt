@@ -3,15 +3,19 @@ package com.example.httpchat.ui.conversation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.view.MotionEvent
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.httpchat.R
 import com.example.httpchat.databinding.ActivityConversationBinding
 import com.example.httpchat.models.responses.Message
+import com.example.httpchat.models.responses.User
 
 
 class ConversationActivity : AppCompatActivity(), ConversationContract.View {
@@ -19,7 +23,7 @@ class ConversationActivity : AppCompatActivity(), ConversationContract.View {
     companion object {
         private const val MESSAGE_FROM_USER ="MESSAGE_FROM_USER"
 
-        fun start(context: Context, user: String) {
+        fun start(context: Context, user: User) {
             val  intent = Intent(context, ConversationActivity::class.java)
             intent.putExtra(MESSAGE_FROM_USER, user)
             context.startActivity(intent)
@@ -31,21 +35,21 @@ class ConversationActivity : AppCompatActivity(), ConversationContract.View {
     private lateinit var adapter: ConversationRecyclerAdapter
 
     private lateinit var presenter: ConversationPresenterImpl
-    private lateinit var userId: String
+    private lateinit var user: User
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityConversationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        userId = intent.getStringExtra(MESSAGE_FROM_USER)!!
+        user = intent.getParcelableExtra(MESSAGE_FROM_USER)!!
         binding.sendMessageTextField.onRightDrawableClicked {
             Toast.makeText(this, "isao esao da arao", Toast.LENGTH_SHORT).show()
         }
 
         presenter = ConversationPresenterImpl(this)
         setupViews()
-        presenter.getConversation(userId)
+        presenter.getConversation(user.id.toString())
 
     }
 
@@ -58,6 +62,18 @@ class ConversationActivity : AppCompatActivity(), ConversationContract.View {
 
         binding.sendMessageTextField.onRightDrawableClicked {
             presenter.sendMessage(it.text.toString())
+        }
+
+        if (!user.picture.isNullOrEmpty()) {
+            val imageAsBytes: ByteArray = Base64.decode(user.picture, Base64.DEFAULT)
+            val image = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.count())
+            Glide.with(binding.root.context)
+                .load(image)
+                .into(binding.userImage)
+        }
+        binding.collapsingToolbar.apply {
+            title = user.name
+            subtitle = user.profession
         }
     }
 
