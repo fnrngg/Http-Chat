@@ -9,8 +9,11 @@ import com.example.httpserver.database.entities.Message
 @Dao
 interface MessagesDao {
 
+    @Query("delete from messages where userMappingId = :userMappingId")
+    fun deleteMessagesByMappingId(userMappingId: Long)
+
     @Query("select * from messages m where m.userMappingId = :userMappingId order by m.dateMillis desc limit 1")
-    fun getConversationThumbnails(userMappingId: Long): Message
+    fun getConversationThumbnail(userMappingId: Long): Message
 
     @Query("select * from messages m where m.userMappingId = :userMappingId order by m.dateMillis asc")
     fun getConversationBetween(userMappingId: Long): List<Message>

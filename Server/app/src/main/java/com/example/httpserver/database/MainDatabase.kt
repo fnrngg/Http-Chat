@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.httpserver.database.daos.ConversationVisibilityDao
 import com.example.httpserver.database.daos.MessagesDao
 import com.example.httpserver.database.daos.UserMappingsDao
 import com.example.httpserver.database.daos.UsersDao
@@ -37,4 +38,5 @@ abstract class MainDatabase : RoomDatabase() {
     abstract fun getUsersDao(): UsersDao
     abstract fun getMessagesDao(): MessagesDao
     abstract fun getUserMappingsDao(): UserMappingsDao
+    abstract fun getConversationVisibilityDao(): ConversationVisibilityDao
 }

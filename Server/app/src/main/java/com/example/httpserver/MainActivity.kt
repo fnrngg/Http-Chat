@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.httpserver.beans.UserAndMessageThumbnail
 import com.example.httpserver.database.MainDatabase
+import com.example.httpserver.database.daos.ConversationVisibilityDao
 import com.example.httpserver.database.daos.MessagesDao
 import com.example.httpserver.database.daos.UserMappingsDao
 import com.example.httpserver.database.daos.UsersDao
+import com.example.httpserver.database.entities.ConversationVisibility
 import com.example.httpserver.database.entities.Message
 import com.example.httpserver.database.entities.User
 import com.example.httpserver.database.entities.UserMapping
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var usersDao: UsersDao
     private lateinit var messagesDao: MessagesDao
     private lateinit var userMappingsDao: UserMappingsDao
+    private lateinit var conversationVisibilityDao: ConversationVisibilityDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -41,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         usersDao = mainDatabase.getUsersDao()
         messagesDao = mainDatabase.getMessagesDao()
         userMappingsDao = mainDatabase.getUserMappingsDao()
+        conversationVisibilityDao = mainDatabase.getConversationVisibilityDao()
 
         val port = resources.getInteger(R.integer.default_port)
 
@@ -93,6 +97,12 @@ class MainActivity : AppCompatActivity() {
                 "/messages/loadConversationThumbnails",
                 loadConversationThumbnailsHandler
             )
+
+            mHttpServer!!.createContext(
+                "/messages/deleteConversation",
+                deleteConversationHandler
+            )
+
             mHttpServer!!.createContext("/messages/searchConversation", conversationSearchHandler)
 
             mHttpServer!!.createContext("/messages/loadConversation", loadConversationHandler)
@@ -135,9 +145,9 @@ class MainActivity : AppCompatActivity() {
                     val requestBody = streamToString(inputStream)
                     val jsonBody = JSONObject(requestBody)
 
-                    val name = jsonBody["name"] as String
-                    val profession = jsonBody["profession"] as String
-                    val picture = jsonBody["picture"] as String
+                    val name = jsonBody.getString("name")
+                    val profession = jsonBody.getString("profession")
+                    val picture = jsonBody.getString("picture")
 
                     val userExists = usersDao.checkIfUserExists(name)
                     if (userExists) {
@@ -146,7 +156,8 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         val newUser = User(0, name, profession, picture)
                         usersDao.insertUser(newUser)
-                        sendResponse(exchange, Gson().toJson(newUser))
+                        val user = usersDao.getUserByName(name)
+                        sendResponse(exchange, Gson().toJson(user))
                     }
                 }
             }
@@ -161,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                     val requestBody = streamToString(inputStream)
                     val jsonBody = JSONObject(requestBody)
 
-                    val userId = jsonBody["userId"] as Long
+                    val userId = jsonBody.getLong("userId")
 
                     val userIsRegistered = usersDao.checkIfUserExists(userId)
                     if (userIsRegistered) {
@@ -184,9 +195,9 @@ class MainActivity : AppCompatActivity() {
                     val requestBody = streamToString(inputStream)
                     val jsonBody = JSONObject(requestBody)
 
-                    val userIdFrom = jsonBody["from"] as Long
-                    val userIdTo = jsonBody["to"] as Long
-                    val text = jsonBody["text"] as String
+                    val userIdFrom = jsonBody.getLong("from")
+                    val userIdTo = jsonBody.getLong("to")
+                    val text = jsonBody.getString("text")
 
                     val userExists = usersDao.checkIfUserExists(userIdFrom)
                     val secondUserExists = usersDao.checkIfUserExists(userIdTo)
@@ -195,6 +206,16 @@ class MainActivity : AppCompatActivity() {
                             userMappingsDao.checkIfMappingExists(userIdFrom, userIdTo)
                         if (mappingExists) {
                             val mapping = userMappingsDao.getMapping(userIdFrom, userIdTo)
+                            val conversationIsVisible =
+                                conversationVisibilityDao.conversationIsVisibleFor(
+                                    userIdFrom,
+                                    mapping.id
+                                )
+                            if (!conversationIsVisible) {
+                                conversationVisibilityDao.insertConversationVisibility(
+                                    ConversationVisibility(0, mapping.id, userIdFrom)
+                                )
+                            }
                             messagesDao.insertMessage(
                                 Message(
                                     0,
@@ -207,13 +228,20 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             val newUserMapping = UserMapping(0, userIdFrom, userIdTo)
                             userMappingsDao.insertUserMapping(newUserMapping)
+                            val userMapping = userMappingsDao.getMapping(userIdFrom, userIdTo)
+                            conversationVisibilityDao.insertConversationVisibility(
+                                ConversationVisibility(0, userMapping.id, userMapping.userOne)
+                            )
+                            conversationVisibilityDao.insertConversationVisibility(
+                                ConversationVisibility(0, userMapping.id, userMapping.userTwo)
+                            )
                             messagesDao.insertMessage(
                                 Message(
                                     0,
                                     text,
                                     System.currentTimeMillis(),
                                     userIdFrom,
-                                    newUserMapping.id
+                                    userMapping.id
                                 )
                             )
                         }
@@ -234,18 +262,42 @@ class MainActivity : AppCompatActivity() {
                     val inputStream = httpExchange.requestBody
                     val requestBody = streamToString(inputStream)
                     val jsonBody = JSONObject(requestBody)
-                    val userIdOne = jsonBody["userIdOne"] as Long
-                    val userNameTwo = jsonBody["userNameTwo"] as String
+                    val userIdOne = jsonBody.getLong("userIdOne")
+                    val userNameTwo = jsonBody.getString("userNameTwo")
                     val userOneExists = usersDao.checkIfUserExists(userIdOne)
                     if (userOneExists) {
-                        val userTwoExists = usersDao.checkIfUserExists(userNameTwo)
-                        if (userTwoExists) {
-                            val user = usersDao.getUserByName(userNameTwo)
-                            val userAndMessageThumbnail = UserAndMessageThumbnail(user, null)
-                            sendResponse(httpExchange, Gson().toJson(userAndMessageThumbnail))
-                        } else {
-                            notifyError(httpExchange, "User Is Not Registered")
+                        val availableUsers =
+                            usersDao.getAllAvailableAlikeUsers(userIdOne, userNameTwo)
+                        val resultArray = arrayListOf<UserAndMessageThumbnail>()
+                        for (availableUser in availableUsers) {
+                            val userMappingExists =
+                                userMappingsDao.checkIfMappingExists(userIdOne, availableUser.id)
+                            if (userMappingExists) {
+                                val mapping =
+                                    userMappingsDao.getMapping(userIdOne, availableUser.id)
+                                val conversationIsVisible =
+                                    conversationVisibilityDao.conversationIsVisibleFor(
+                                        userIdOne,
+                                        mapping.id
+                                    )
+                                if (conversationIsVisible) {
+                                    val thumbnailMessage =
+                                        messagesDao.getConversationThumbnail(mapping.id)
+                                    val userAndMessageThumbnail =
+                                        UserAndMessageThumbnail(availableUser, thumbnailMessage)
+                                    resultArray.add(userAndMessageThumbnail)
+                                } else {
+                                    val userAndMessageThumbnail =
+                                        UserAndMessageThumbnail(availableUser, null)
+                                    resultArray.add(userAndMessageThumbnail)
+                                }
+                            } else {
+                                val userAndMessageThumbnail =
+                                    UserAndMessageThumbnail(availableUser, null)
+                                resultArray.add(userAndMessageThumbnail)
+                            }
                         }
+                        sendResponse(httpExchange, Gson().toJson(resultArray))
                     } else {
                         notifyError(httpExchange, "User Is Not Registered")
                     }
@@ -267,8 +319,8 @@ class MainActivity : AppCompatActivity() {
                     val inputStream = httpExchange.requestBody
                     val requestBody = streamToString(inputStream)
                     val jsonBody = JSONObject(requestBody)
-                    val userId = jsonBody["userId"] as Long
-                    val loadIndex = jsonBody["loadIndex"] as Long
+                    val userId = jsonBody.getLong("userId")
+                    val loadIndex = jsonBody.getLong("loadIndex")
 
                     val loadPosition = 10 * loadIndex
                     val userExists = usersDao.checkIfUserExists(userId)
@@ -290,7 +342,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                                 val user = usersDao.getUserById(otherUserId)
                                 val messages =
-                                    messagesDao.getConversationThumbnails(userMapping.id)
+                                    messagesDao.getConversationThumbnail(userMapping.id)
                                 resultArray.add(UserAndMessageThumbnail(user, messages))
                             }
                         }
@@ -312,8 +364,8 @@ class MainActivity : AppCompatActivity() {
                     val inputStream = httpExchange.requestBody
                     val requestBody = streamToString(inputStream)
                     val jsonBody = JSONObject(requestBody)
-                    val userIdOne = jsonBody["userIdOne"] as Long
-                    val userIdTwo = jsonBody["userIdTwo"] as Long
+                    val userIdOne = jsonBody.getLong("userIdOne")
+                    val userIdTwo = jsonBody.getLong("userIdTwo")
 
                     val userOneExists = usersDao.checkIfUserExists(userIdOne)
                     val userTwoExists = usersDao.checkIfUserExists(userIdTwo)
@@ -336,4 +388,45 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private val deleteConversationHandler = HttpHandler { httpExchange ->
+        run {
+            when (httpExchange!!.requestMethod) {
+                "POST" -> {
+                    val inputStream = httpExchange.requestBody
+                    val requestBody = streamToString(inputStream)
+                    val jsonBody = JSONObject(requestBody)
+                    val userId = jsonBody.getLong("userId")
+                    val userMappingId = jsonBody.getLong("userMappingId")
+
+                    val userExists = usersDao.checkIfUserExists(userId)
+                    val mappingSize = userMappingsDao.checkIfMappingExists(userMappingId)
+                    if (userExists) {
+                        if (mappingSize > 0) {
+                            if (mappingSize > 1) {
+                                conversationVisibilityDao.deleteConversationFor(
+                                    userId,
+                                    userMappingId
+                                )
+                            } else {
+                                conversationVisibilityDao.deleteConversationFor(
+                                    userId,
+                                    userMappingId
+                                )
+                                messagesDao.deleteMessagesByMappingId(userMappingId)
+                                userMappingsDao.deleteMappingById(userMappingId)
+                            }
+                            sendResponse(httpExchange, "Successfully Deleted")
+                        } else {
+                            notifyError(httpExchange, "Conversation Does Not Exist")
+                        }
+                    } else {
+                        notifyError(httpExchange, "User Is Not Registered")
+                    }
+                }
+
+            }
+        }
+    }
+
 }

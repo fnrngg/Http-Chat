@@ -9,6 +9,12 @@ import com.example.httpserver.database.entities.UserMapping
 @Dao
 interface UserMappingsDao {
 
+    @Query("delete from user_mappings where id = :userMappingId")
+    fun deleteMappingById(userMappingId: Long)
+
+    @Query("select count(u.userOne) from user_mappings u where u.id = :userMappingId")
+    fun checkIfMappingExists(userMappingId: Long): Int
+
     @Query("select u.* from user_mappings u where u.userOne = :userId or u.userTwo = :userId")
     fun getMappingsForUser(userId: Long): List<UserMapping>
 
