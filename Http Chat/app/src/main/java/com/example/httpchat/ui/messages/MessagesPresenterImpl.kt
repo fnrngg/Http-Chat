@@ -18,7 +18,7 @@ class MessagesPresenterImpl(private val view: MessagesContract.View) :
 
     override fun getConversations(nickname: String, loadedNum: Int) {
         compositeDisposable.add(
-            service.loadConversationHistory(myId.toLong(), loadedNum.toLong()).subscribeOn(Schedulers.io())
+            service.loadConversationHistory(myId.toLong()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {

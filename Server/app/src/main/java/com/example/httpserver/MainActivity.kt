@@ -147,7 +147,11 @@ class MainActivity : AppCompatActivity() {
 
                     val name = jsonBody.getString("name")
                     val profession = jsonBody.getString("profession")
-                    val picture = jsonBody.getString("picture")
+                    var picture = ""
+                    try {
+                        picture = jsonBody.getString("picture")
+                    }catch (exception:Exception){
+                    }
 
                     val userExists = usersDao.checkIfUserExists(name)
                     if (userExists) {
