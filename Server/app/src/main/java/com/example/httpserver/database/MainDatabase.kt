@@ -4,14 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.httpserver.database.daos.ActiveUsersDao
+import com.example.httpserver.database.daos.ConversationVisibilityDao
 import com.example.httpserver.database.daos.MessagesDao
+import com.example.httpserver.database.daos.UserMappingsDao
 import com.example.httpserver.database.daos.UsersDao
-import com.example.httpserver.database.entities.ActiveUser
+import com.example.httpserver.database.entities.ConversationVisibility
 import com.example.httpserver.database.entities.Message
 import com.example.httpserver.database.entities.User
+import com.example.httpserver.database.entities.UserMapping
 
-@Database(entities = [ActiveUser::class, User::class, Message::class], version = 1)
+@Database(
+    entities = [ConversationVisibility::class, User::class, Message::class, UserMapping::class],
+    version = 3
+)
 abstract class MainDatabase : RoomDatabase() {
     companion object {
         private lateinit var database: MainDatabase
@@ -33,5 +38,6 @@ abstract class MainDatabase : RoomDatabase() {
 
     abstract fun getUsersDao(): UsersDao
     abstract fun getMessagesDao(): MessagesDao
-    abstract fun getActiveUsersDao(): ActiveUsersDao
+    abstract fun getUserMappingsDao(): UserMappingsDao
+    abstract fun getConversationVisibilityDao(): ConversationVisibilityDao
 }

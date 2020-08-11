@@ -8,7 +8,7 @@ data class Message(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val text: String,
-    val date: String,
-    val sentFrom: Long,
-    val sentTo: Long
+    val dateMillis: Long,
+    val from: Long,
+    val userMappingId: Long
 )

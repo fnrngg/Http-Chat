@@ -3,9 +3,11 @@ package com.example.httpserver.database.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "active_users")
-data class ActiveUser(
+@Entity(tableName = "conversation_visibilities")
+data class ConversationVisibility(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val userId: Long
+    val userMappingId: Long,
+    val userId: Long,
+    val dateMillis: Long
 )
