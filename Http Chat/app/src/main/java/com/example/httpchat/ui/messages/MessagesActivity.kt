@@ -23,7 +23,7 @@ class MessagesActivity : AppCompatActivity(), MessagesContract.View {
 
     private lateinit var presenter: MessagesContract.Presenter
 
-    private val conversations = mutableListOf<UserAndMessageThumbnail>()
+    private var conversations = mutableListOf<UserAndMessageThumbnail>()
 
     private var loadedNum: Int = 0
 
@@ -40,7 +40,11 @@ class MessagesActivity : AppCompatActivity(), MessagesContract.View {
 
     private fun setupSearch() {
         binding.messagesSearch.doAfterTextChanged {
-            presenter.getConversations(loadedNum)
+            if (it.isNullOrEmpty()) {
+                presenter.getConversations(loadedNum)
+            } else {
+                presenter.searchConversations(it.toString())
+            }
         }
     }
 
@@ -68,10 +72,16 @@ class MessagesActivity : AppCompatActivity(), MessagesContract.View {
     }
 
     override fun setConversations(conversations: List<UserAndMessageThumbnail>) {
-        this.conversations += conversations
+        this.conversations.plusAssign(conversations)
         if (conversations.isNotEmpty()) {
             loadedNum++
         }
+        adapter.setData(this.conversations)
+    }
+
+    override fun setSearchResults(conversations: List<UserAndMessageThumbnail>) {
+        loadedNum = 0
+        this.conversations = conversations.toMutableList()
         adapter.setData(this.conversations)
     }
 

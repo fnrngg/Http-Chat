@@ -25,7 +25,7 @@ class RegisterPresenterImpl(private val view: RegisterContract.View) : RegisterC
                         view.startActivity()
                     },
                     {
-                        Log.d("ragaca","ragaca")
+                        Log.d("ragaca",it.toString())
                     })
         )
     }

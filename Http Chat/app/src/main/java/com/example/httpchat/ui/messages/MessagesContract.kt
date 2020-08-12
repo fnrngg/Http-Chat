@@ -6,6 +6,8 @@ interface MessagesContract {
 
     interface View {
         fun setConversations(conversations: List<UserAndMessageThumbnail>)
+
+        fun setSearchResults(conversations: List<UserAndMessageThumbnail>)
     }
 
     interface Presenter {

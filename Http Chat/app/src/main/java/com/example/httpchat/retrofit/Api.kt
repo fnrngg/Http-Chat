@@ -34,7 +34,8 @@ interface Api {
     @Multipart
     @POST("messages/loadConversationThumbnails")
     fun loadConversationHistory(
-        @Body userId: Long
+        @Part userId: Long,
+        @Part loadIndex: Long
     ): Single<List<UserAndMessageThumbnail>>
 
     //TODO incomplete
