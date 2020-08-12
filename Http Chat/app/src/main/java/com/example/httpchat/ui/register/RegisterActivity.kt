@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.httpchat.databinding.ActivityRegisterBinding
@@ -89,8 +88,8 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
     }
 
     override fun startActivity() {
-//        Log.d("ragaca","ragaca")
         MessagesActivity.start(this)
+        finish()
     }
 
 }
