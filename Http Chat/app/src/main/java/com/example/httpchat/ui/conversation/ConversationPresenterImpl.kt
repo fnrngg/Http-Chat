@@ -1,5 +1,6 @@
 package com.example.httpchat.ui.conversation
 
+import com.example.httpchat.models.parameterclasses.sendMessageParams
 import com.example.httpchat.models.requests.LoadConversationRequest
 import com.example.httpchat.preferences.PreferencesManager
 import com.example.httpchat.retrofit.Api
@@ -42,7 +43,7 @@ class ConversationPresenterImpl(private val view: ConversationContract.View) :
 
     override fun sendMessage(message: String) {
         compositeDisposable.add(
-            service.sendMessage(myId.toLong(), userId.toLong(), message)
+            service.sendMessage(sendMessageParams(myId.toLong(), userId.toLong(), message))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

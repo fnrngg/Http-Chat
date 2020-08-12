@@ -1,5 +1,8 @@
 package com.example.httpchat.ui.messages
 
+import com.example.httpchat.models.parameterclasses.GetConversationHistoryParams
+import com.example.httpchat.models.parameterclasses.SearchParameters
+import com.example.httpchat.models.parameterclasses.deleteConversationParams
 import com.example.httpchat.preferences.PreferencesManager
 import com.example.httpchat.retrofit.Api
 import com.example.httpchat.retrofit.RetrofitClient
@@ -18,7 +21,7 @@ class MessagesPresenterImpl(private val view: MessagesContract.View) :
 
     override fun getConversations(loadedNum: Int) {
         compositeDisposable.add(
-            service.loadConversationHistory(myId.toLong(), loadedNum.toLong())
+            service.loadConversationHistory(GetConversationHistoryParams(myId.toLong(), loadedNum.toLong()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -33,7 +36,7 @@ class MessagesPresenterImpl(private val view: MessagesContract.View) :
 
     override fun searchConversations(nickname: String) {
         compositeDisposable.add(
-            service.searchConversation(myId.toLong(), nickname)
+            service.searchConversation(SearchParameters( myId.toLong(), nickname))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -51,7 +54,7 @@ class MessagesPresenterImpl(private val view: MessagesContract.View) :
 
     override fun deleteConversation(userMappingId: Long) {
         compositeDisposable.add(
-            service.deleteConversation(myId.toLong(), userMappingId).subscribeOn(Schedulers.io())
+            service.deleteConversation(deleteConversationParams(myId.toLong(), userMappingId)).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({}, {})
         )

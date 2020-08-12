@@ -1,5 +1,9 @@
 package com.example.httpchat.retrofit
 
+import com.example.httpchat.models.parameterclasses.GetConversationHistoryParams
+import com.example.httpchat.models.parameterclasses.SearchParameters
+import com.example.httpchat.models.parameterclasses.deleteConversationParams
+import com.example.httpchat.models.parameterclasses.sendMessageParams
 import com.example.httpchat.models.requests.LoadConversationRequest
 import com.example.httpchat.models.requests.UserLoginRequest
 import com.example.httpchat.models.responses.Message
@@ -13,7 +17,7 @@ interface Api {
     //loads single conversation between users
     @POST("messages/loadConversation")
     fun loadConversation(
-        @Body loadConversationRequest : LoadConversationRequest
+        @Body loadConversationRequest: LoadConversationRequest
     ): Single<List<Message>>
 
     @Headers(
@@ -21,7 +25,7 @@ interface Api {
     )
     @POST("login")
     fun userLogin(
-        @Body userLoginRequest : UserLoginRequest
+        @Body userLoginRequest: UserLoginRequest
     ): Single<User>
 
     @Multipart
@@ -31,35 +35,26 @@ interface Api {
     ): Single<List<User>>
 
     //TODO incomplete
-    @Multipart
     @POST("messages/loadConversationThumbnails")
     fun loadConversationHistory(
-        @Part userId: Long,
-        @Part loadIndex: Long
+        @Body params: GetConversationHistoryParams
     ): Single<List<UserAndMessageThumbnail>>
 
     //TODO incomplete
-    @Multipart
     @POST("messages/searchConversation")
     fun searchConversation(
-        @Part userIdOne: Long,
-        @Part userNameTwo: String
+        @Body SearchParameters: SearchParameters
     ): Single<List<UserAndMessageThumbnail>>
 
-    @Multipart
     @POST("messages/deleteConversation")
     fun deleteConversation(
-        @Part userId: Long,
-        @Part userMappingId: Long
+        @Body params: deleteConversationParams
     ): Single<String>
 
-    @Multipart
     @POST("messages/sendMessage")
     fun sendMessage(
-        @Part from : Long,
-        @Part to : Long,
-        @Part text : String
-    ) : Single<String>
+        @Body params: sendMessageParams
+    ): Single<String>
 
 
 }
